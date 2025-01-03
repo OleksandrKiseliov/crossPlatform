@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "147183466756",
+    "project_id": "tobee-e628a",
+    "storage_bucket": "tobee-e628a.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:147183466756:android:598b7a9c6fce88d39cb851",
+        "android_client_info": {
+          "package_name": "com.example.to_bee"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA6_tY4m2qw5eDqIcdoifd0bCgia_D8Hiw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
