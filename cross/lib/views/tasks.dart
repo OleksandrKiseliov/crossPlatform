@@ -161,7 +161,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
                         );
                         Navigator.pop(context); // Go back to the previous page
                       }
-                    },child:Text("Add",style: TextStyle(color:Colors.orange,fontSize: 20),)),
+                    },child:Text("Add",style: TextStyle(color:Colors.red,fontSize: 20),)),
                   ),
                 )
               ],

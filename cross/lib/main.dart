@@ -6,6 +6,7 @@ import 'package:to_bee/views/home.dart';
 import 'package:to_bee/views/home1.dart';
 import 'package:to_bee/views/home2.dart';
 import 'package:to_bee/views/home_page.dart';
+ // Add this line to import the correct file
 import 'package:to_bee/views/on_boarding.dart';
 import 'package:to_bee/views/pomodoro_timer.dart';
 import 'package:to_bee/views/pomodoro_timer_poage.dart';
