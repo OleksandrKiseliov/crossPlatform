@@ -185,7 +185,7 @@ void initState(){
             child: MaterialButton(
               onPressed: ()  {
                 // Navigate to AddTaskPage and wait for the result
-Navigator.push(context, MaterialPageRoute(builder: (context) => AddTaskPage2()));
+Navigator.push(context, MaterialPageRoute(builder: (context) => AddTask()));
 
 
               },
@@ -235,7 +235,7 @@ Navigator.push(context, MaterialPageRoute(builder: (context) => AddTaskPage2()))
     )*/);
 
   }
-  void navigateToAddPage(){final route =MaterialPageRoute(builder: (context) => AddTaskPage2());
+  void navigateToAddPage(){final route =MaterialPageRoute(builder: (context) => AddTask());
   Navigator.push(context, route);
 
 

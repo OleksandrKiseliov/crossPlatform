@@ -4,34 +4,51 @@ import 'package:flutter/material.dart';
 class TimerPage extends StatefulWidget {
   final String taskTitle;
   final String taskDescription;
+  final String taskTime;
 
-  TimerPage({required this.taskTitle, required this.taskDescription});
+  TimerPage({
+    required this.taskTitle,
+    required this.taskDescription,
+    required this.taskTime,
+  });
 
   @override
   _TimerPageState createState() => _TimerPageState();
 }
 
 class _TimerPageState extends State<TimerPage> {
-  Duration duration = Duration(minutes: 25); // Default Pomodoro work duration
-  late Timer timer;
+  late Duration duration;
+  Timer? timer;
   bool isRunning = false;
   bool isCompleted = false;
 
   @override
   void initState() {
     super.initState();
+    duration = parseTaskTime(widget.taskTime);
   }
 
-  // Start the timer
+  Duration parseTaskTime(String taskTime) {
+    final timeParts = taskTime.split(':');
+    if (timeParts.length == 3) {
+      return Duration(
+        hours: int.parse(timeParts[0]),
+        minutes: int.parse(timeParts[1]),
+        seconds: int.parse(timeParts[2]),
+      );
+    }
+    return const Duration(minutes: 25);
+  }
+
   void startTimer() {
     setState(() {
       isRunning = true;
     });
 
-    timer = Timer.periodic(Duration(seconds: 1), (timer) {
+    timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (duration.inSeconds > 0) {
         setState(() {
-          duration = duration - Duration(seconds: 1);
+          duration = duration - const Duration(seconds: 1);
         });
       } else {
         setState(() {
@@ -43,43 +60,27 @@ class _TimerPageState extends State<TimerPage> {
     });
   }
 
-  // Pause the timer
   void pauseTimer() {
     setState(() {
       isRunning = false;
     });
-    timer.cancel();
+    timer?.cancel();
   }
 
-  // Resume the timer
-  void resumeTimer() {
-    startTimer();
-  }
-
-  // Quit task
-  void quitTask() {
-    timer.cancel(); // Stop the timer
-    Navigator.pop(context); // Navigate back to the previous screen
-  }
-
-  // Select Pomodoro duration (Work, Short Break, Long Break)
-  void selectPomodoroDuration(String type) {
+  void selectDuration(Duration newDuration) {
+    if (timer?.isActive ?? false) {
+      timer?.cancel();
+    }
     setState(() {
-      if (type == "Work") {
-        duration = Duration(minutes: 25);
-      } else if (type == "Short Break") {
-        duration = Duration(minutes: 5);
-      } else if (type == "Long Break") {
-        duration = Duration(minutes: 15);
-      }
+      duration = newDuration;
+      isRunning = false;
+      isCompleted = false;
     });
   }
 
   @override
   void dispose() {
-    if (timer.isActive) {
-      timer.cancel(); // Cancel timer when leaving the screen
-    }
+    timer?.cancel();
     super.dispose();
   }
 
@@ -89,17 +90,15 @@ class _TimerPageState extends State<TimerPage> {
       appBar: AppBar(
         backgroundColor: Colors.orange.shade100,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.orange),
+          icon: const Icon(Icons.arrow_back, color: Colors.orange),
           onPressed: () {
-            if (timer.isActive) {
-              timer.cancel(); // Stop the timer when going back
-            }
+            timer?.cancel();
             Navigator.pop(context);
           },
         ),
         title: Text(
           widget.taskTitle,
-          style: TextStyle(color: Colors.orange),
+          style: const TextStyle(color: Colors.orange),
         ),
       ),
       body: Padding(
@@ -109,82 +108,75 @@ class _TimerPageState extends State<TimerPage> {
           children: [
             Text(
               widget.taskDescription,
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
               textAlign: TextAlign.center,
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Text(
-              isCompleted ? "Completed!" : isRunning ? "In progress" : "Paused",
-              style: TextStyle(fontSize: 20, color: Colors.orange),
+              isCompleted
+                  ? "Completed!"
+                  : isRunning
+                  ? "In progress"
+                  : "Paused",
+              style: const TextStyle(fontSize: 20, color: Colors.orange),
             ),
-            SizedBox(height: 20),
-            Stack(
-              alignment: Alignment.center,
-              children: [
-                CircularProgressIndicator(
-                  value: duration.inSeconds > 0
-                      ? duration.inSeconds / (25 * 60) // Adjust progress based on Pomodoro time
-                      : 0.0,
-                  strokeWidth: 6,
-                  backgroundColor: Colors.grey.shade200,
-                  valueColor: AlwaysStoppedAnimation<Color>(Colors.orange),
-                ),
-                Text(
-                  "${duration.inMinutes.remainder(60).toString().padLeft(2, '0')}:${duration.inSeconds.remainder(60).toString().padLeft(2, '0')}",
-                  style: TextStyle(fontSize: 48, fontWeight: FontWeight.bold),
-                ),
-              ],
+            const SizedBox(height: 20),
+            CircularProgressIndicator(
+              value: duration.inSeconds > 0
+                  ? duration.inSeconds /
+                  parseTaskTime(widget.taskTime).inSeconds
+                  : 0.0,
+              strokeWidth: 6,
+              backgroundColor: Colors.grey.shade200,
+              valueColor: const AlwaysStoppedAnimation<Color>(Colors.orange),
             ),
-            SizedBox(height: 20),
-            if (!isRunning && !isCompleted) // Show Pomodoro options before timer starts
+            const SizedBox(height: 20),
+            Text(
+              "${duration.inMinutes.remainder(60).toString().padLeft(2, '0')}:${duration.inSeconds.remainder(60).toString().padLeft(2, '0')}",
+              style: const TextStyle(fontSize: 48, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 20),
+            if (!isRunning && !isCompleted)
               Column(
                 children: [
                   Text(
-                    "Select Pomodoro Time:",
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    "Choose time:",
+                    style: const TextStyle(
+                        fontSize: 16, fontWeight: FontWeight.bold),
                   ),
-                  SizedBox(height: 10),
-                  Column( crossAxisAlignment: CrossAxisAlignment.center,
+                  const SizedBox(height: 10),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          ElevatedButton(
-                            onPressed: () => selectPomodoroDuration("Work"),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.orange,
-                            ),
-                            child: Text(
-                              "Work (25 min)",
-                              style: TextStyle(fontSize: 14),
-                            ),
-                          ),
-                          ElevatedButton(
-                            onPressed: () => selectPomodoroDuration("Short Break"),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.orange.shade300,
-                            ),
-                            child: Text(
-                              "Short Break (5 min)",
-                              style: TextStyle(fontSize: 14),
-                            ),
-                          ),])
-                          ,ElevatedButton(
-                            onPressed: () => selectPomodoroDuration("Long Break"),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.orange.shade400,
-                            ),
-                            child: Text(
-                              "Long Break (15 min)",
-                              style: TextStyle(fontSize: 14),
-                            ),
-                          ),
-                        ],
-
+                      ElevatedButton(
+                        onPressed: () =>
+                            selectDuration(parseTaskTime(widget.taskTime)),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.orange,
+                        ),
+                        child: Text(widget.taskTitle),
+                      ),
+                      ElevatedButton(
+                        onPressed: () =>
+                            selectDuration(const Duration(minutes: 5)),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.green,
+                        ),
+                        child: const Text("5 min break"),
+                      ),
+                      ElevatedButton(
+                        onPressed: () =>
+                            selectDuration(const Duration(minutes: 15)),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.blue,
+                        ),
+                        child: const Text("15 min break"),
+                      ),
+                    ],
                   ),
                 ],
               ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -194,12 +186,15 @@ class _TimerPageState extends State<TimerPage> {
                   color: Colors.orange,
                   onPressed: isRunning ? pauseTimer : startTimer,
                 ),
-                SizedBox(width: 20),
+                const SizedBox(width: 20),
                 IconButton(
-                  icon: Icon(Icons.stop),
+                  icon: const Icon(Icons.stop),
                   iconSize: 40,
                   color: Colors.orange,
-                  onPressed: quitTask,
+                  onPressed: () {
+                    timer?.cancel();
+                    Navigator.pop(context);
+                  },
                 ),
               ],
             ),
