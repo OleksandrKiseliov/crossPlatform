@@ -12,8 +12,8 @@ import 'package:to_bee/views/pomodoro_timer_poage.dart';
 import 'package:to_bee/views/pprofile.dart';
 import 'package:to_bee/views/tasks.dart';
 import 'package:to_bee/views/tasks2.dart';
-import 'package:to_bee/views/login_screen.dart';
-import 'package:to_bee/views/sign_up.dart';
+import 'package:to_bee/views/login_screen.dart' as login_view;
+import 'package:to_bee/views/sign_up.dart' as signup_view;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -37,8 +37,8 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/': (context) => const OnBoarding(),
-        '/sign_in': (context) => const Login(),
-        '/sign_up': (context) => const SignUp(),
+        '/sign_in': (context) => const login_view.Login(),
+        '/sign_up': (context) => const signup_view.SignUp(),
         '/home': (context) => MyHomePage(),
         '/profile': (context) => const Profile(),
       },

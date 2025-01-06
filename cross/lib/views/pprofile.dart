@@ -139,6 +139,7 @@ class _ProfileState extends State<Profile> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: _isDarkTheme ? Colors.black : Colors.white,
+      resizeToAvoidBottomInset: true,
       appBar: AppBar(
         title: const Text('Profile'),
         backgroundColor: Colors.orange,
@@ -149,75 +150,77 @@ class _ProfileState extends State<Profile> {
           ),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Center(
-              child: GestureDetector(
-                onTap: _pickImage,
-                child: CircleAvatar(
-                  radius: 50,
-                  backgroundImage: _selectedImage != null
-                      ? FileImage(_selectedImage!)
-                      : (_profilePicUrl != null
-                          ? NetworkImage(_profilePicUrl!)
-                          : const AssetImage('assets/placeholder.png')) as ImageProvider,
-                  child: const Align(
-                    alignment: Alignment.bottomRight,
-                    child: Icon(Icons.edit, color: Colors.orange),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: GestureDetector(
+                  onTap: _pickImage,
+                  child: CircleAvatar(
+                    radius: 50,
+                    backgroundImage: _selectedImage != null
+                        ? FileImage(_selectedImage!)
+                        : (_profilePicUrl != null
+                            ? NetworkImage(_profilePicUrl!)
+                            : const AssetImage('assets/placeholder.png')) as ImageProvider,
+                    child: const Align(
+                      alignment: Alignment.bottomRight,
+                      child: Icon(Icons.edit, color: Colors.orange),
+                    ),
                   ),
                 ),
               ),
-            ),
-            const SizedBox(height: 20),
-            const Text('Name:', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.orange)),
-            TextField(
-              controller: _nameController..text = _name ?? '',
-              decoration: const InputDecoration(
-                labelText: 'Edit your name',
-                labelStyle: TextStyle(color: Colors.orange),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.orange),
+              const SizedBox(height: 20),
+              const Text('Name:', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.orange)),
+              TextField(
+                controller: _nameController..text = _name ?? '',
+                decoration: const InputDecoration(
+                  labelText: 'Edit your name',
+                  labelStyle: TextStyle(color: Colors.orange),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.orange),
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(height: 10),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.orange,
-                foregroundColor: Colors.white,
+              const SizedBox(height: 10),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.orange,
+                  foregroundColor: Colors.white,
+                ),
+                onPressed: _updateProfile,
+                child: const Text('Update Profile'),
               ),
-              onPressed: _updateProfile,
-              child: const Text('Update Profile'),
-            ),
-            const SizedBox(height: 20),
-            const Text('Status:', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.orange)),
-            Text(_status ?? 'No status set', style: TextStyle(color: _isDarkTheme ? Colors.white : Colors.black)),
-            TextField(
-              controller: _statusController,
-              decoration: const InputDecoration(
-                labelText: 'Update your status',
-                labelStyle: TextStyle(color: Colors.orange),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.orange),
+              const SizedBox(height: 20),
+              const Text('Status:', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.orange)),
+              Text(_status ?? 'No status set', style: TextStyle(color: _isDarkTheme ? Colors.white : Colors.black)),
+              TextField(
+                controller: _statusController,
+                decoration: const InputDecoration(
+                  labelText: 'Update your status',
+                  labelStyle: TextStyle(color: Colors.orange),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.orange),
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(height: 10),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.orange,
-                foregroundColor: Colors.white,
+              const SizedBox(height: 10),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.orange,
+                  foregroundColor: Colors.white,
+                ),
+                onPressed: _updateStatus,
+                child: const Text('Update Status'),
               ),
-              onPressed: _updateStatus,
-              child: const Text('Update Status'),
-            ),
-            const SizedBox(height: 20),
-            const Text('Activity History:', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.orange)),
-            Expanded(
-              child: ListView.builder(
+              const SizedBox(height: 20),
+              const Text('Activity History:', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.orange)),
+              ListView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
                 itemCount: _activityHistory.length,
                 itemBuilder: (context, index) {
                   return ListTile(
@@ -228,30 +231,30 @@ class _ProfileState extends State<Profile> {
                   );
                 },
               ),
-            ),
-            const SizedBox(height: 20),
-            const Text('Change Password:', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.orange)),
-            TextField(
-              controller: _newPasswordController,
-              obscureText: true,
-              decoration: const InputDecoration(
-                labelText: 'New Password',
-                labelStyle: TextStyle(color: Colors.orange),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.orange),
+              const SizedBox(height: 20),
+              const Text('Change Password:', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.orange)),
+              TextField(
+                controller: _newPasswordController,
+                obscureText: true,
+                decoration: const InputDecoration(
+                  labelText: 'New Password',
+                  labelStyle: TextStyle(color: Colors.orange),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.orange),
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(height: 10),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.orange,
-                foregroundColor: Colors.white,
+              const SizedBox(height: 10),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.orange,
+                  foregroundColor: Colors.white,
+                ),
+                onPressed: _changePassword,
+                child: const Text('Change Password'),
               ),
-              onPressed: _changePassword,
-              child: const Text('Change Password'),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
