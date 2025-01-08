@@ -60,7 +60,7 @@ class _PomodoroTimerPageState extends State<PomodoroTimerPage> {
           actions: [
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop(); // Close dialog
+                Navigator.of(context).pop();
               },
               child: const Text('Cancel'),
             ),
@@ -88,7 +88,7 @@ class _PomodoroTimerPageState extends State<PomodoroTimerPage> {
                     _tasksFuture = _loadTasks();
                   });
 
-                  Navigator.of(context).pop(); // Close dialog
+                  Navigator.of(context).pop();
                 } catch (e) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text('Failed to add task: $e')),
@@ -160,6 +160,7 @@ class _PomodoroTimerPageState extends State<PomodoroTimerPage> {
                               taskTitle: task['title'],
                               taskDescription: task['description'],
                               taskTime: task['time'],
+                              taskId: task['id'],
                             ),
                           ),
                         );

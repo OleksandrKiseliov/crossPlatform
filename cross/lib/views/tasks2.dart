@@ -111,6 +111,7 @@ class _AddTaskState extends State<AddTask> {
         'type': taskType,
         'createdAt': DateTime.now(),
         'status': 'pending',
+        'isCompleted': false,
       });
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Task added successfully")),

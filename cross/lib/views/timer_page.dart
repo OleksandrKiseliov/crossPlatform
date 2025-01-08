@@ -1,15 +1,20 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:to_bee/services/firebase_service.dart';
+import 'package:to_bee/services/pomodoro_timer_service.dart'; // Для работы с Firestore
 
 class TimerPage extends StatefulWidget {
   final String taskTitle;
   final String taskDescription;
   final String taskTime;
+  final String taskId;
 
   TimerPage({
     required this.taskTitle,
     required this.taskDescription,
     required this.taskTime,
+    required this.taskId,
   });
 
   @override
@@ -76,6 +81,20 @@ class _TimerPageState extends State<TimerPage> {
       isRunning = false;
       isCompleted = false;
     });
+  }
+
+  Future<void> deleteTask(String taskId) async {
+    try {
+      await PomodoroTimerService().deleteTask(taskId);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Task deleted successfully")),
+      );
+      Navigator.pop(context); // Закрываем экран после успешного удаления
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Error deleting task: $e")),
+      );
+    }
   }
 
   @override
@@ -194,6 +213,22 @@ class _TimerPageState extends State<TimerPage> {
                   onPressed: () {
                     timer?.cancel();
                     Navigator.pop(context);
+                  },
+                ),
+                const SizedBox(width: 20),
+                IconButton(
+                  icon: const Icon(Icons.delete),
+                  iconSize: 40,
+                  color: Colors.red,
+                  onPressed: () {
+                    if (isRunning) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                            content: Text("Pause the timer before deleting")),
+                      );
+                    } else {
+                      deleteTask(widget.taskId);
+                    }
                   },
                 ),
               ],

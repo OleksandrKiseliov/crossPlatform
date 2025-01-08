@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
-import 'package:to_bee/views/home.dart';
 import 'package:to_bee/views/home_page.dart';
 
 class AddTask extends StatefulWidget {
@@ -18,6 +17,7 @@ class _AddTaskState extends State<AddTask> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
+  // Function to handle adding a task
   Future<void> _addTask() async {
     final User? currentUser = _auth.currentUser;
     if (currentUser == null) {
@@ -28,6 +28,8 @@ class _AddTaskState extends State<AddTask> {
     }
 
     final String title = _titleController.text.trim();
+
+    // Ensure title and date are filled
     if (title.isEmpty || _selectedDate == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Please fill all fields")),
@@ -37,9 +39,10 @@ class _AddTaskState extends State<AddTask> {
 
     final DateTime now = DateTime.now();
     final String taskType =
-        _selectedDate!.difference(now).inDays == 0 ? 'daily' : 'recommended';
+    _selectedDate!.difference(now).inDays == 0 ? 'daily' : 'recommended';
 
     try {
+      // Add task to Firestore
       await _firestore
           .collection('users')
           .doc(currentUser.uid)
@@ -54,7 +57,7 @@ class _AddTaskState extends State<AddTask> {
       );
       _titleController.clear();
       setState(() {
-        _selectedDate = null;
+        _selectedDate = null;  // Reset date after task is added
       });
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -63,6 +66,7 @@ class _AddTaskState extends State<AddTask> {
     }
   }
 
+  // Function to select a date
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? pickedDate = await showDatePicker(
       context: context,
@@ -177,6 +181,15 @@ class _AddTaskState extends State<AddTask> {
                         ),
                       ],
                     ),
+                    // Validation message for date
+                    if (_selectedDate == null)
+                      const Padding(
+                        padding: EdgeInsets.only(top: 5.0),
+                        child: Text(
+                          "Date is required",
+                          style: TextStyle(color: Colors.red, fontSize: 12),
+                        ),
+                      ),
                     const SizedBox(height: 30),
                     ElevatedButton(
                       onPressed: _addTask,

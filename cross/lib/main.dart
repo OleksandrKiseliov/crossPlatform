@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:to_bee/services/provider.dart';
 import 'package:to_bee/views/home.dart';
-import 'package:to_bee/views/home1.dart';
 import 'package:to_bee/views/home2.dart';
 import 'package:to_bee/views/home_page.dart';
  // Add this line to import the correct file
