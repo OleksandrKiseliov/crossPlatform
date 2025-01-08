@@ -1,6 +1,31 @@
 import 'package:flutter/material.dart';
 
-class RewardsPage extends StatelessWidget {
+import '../services/firebase_service.dart';
+
+class RewardsPage extends StatefulWidget {
+  @override
+  _RewardsPageState createState() => _RewardsPageState();
+}
+
+class _RewardsPageState extends State<RewardsPage> {
+  FirebaseService _firebaseService = FirebaseService();
+  int totalPoints = 0;
+  List<Map<String, String>> completedTasks = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchCompletedTasks();
+  }
+
+  Future<void> _fetchCompletedTasks() async {
+    List<Map<String, String>> tasks = await _firebaseService.getCompletedTasks();
+    setState(() {
+      completedTasks = tasks;
+      totalPoints = tasks.length * 100;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -18,26 +43,17 @@ class RewardsPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Points collected section
+            // Section for total points
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Point collected',
+                  'Points Collected',
                   style: TextStyle(
                     fontSize: 20.0,
                     fontWeight: FontWeight.bold,
                   ),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    // Swap reward logic
-                  },
-                  child: Text('Swap Now'),
-                  style: ElevatedButton.styleFrom(
-
-                  ),
-                ),
+                )
               ],
             ),
             SizedBox(height: 20),
@@ -60,7 +76,7 @@ class RewardsPage extends StatelessWidget {
                   Icon(Icons.star, color: Colors.orange, size: 40),
                   SizedBox(width: 20),
                   Text(
-                    '1150', // This would be fetched from a backend
+                    '$totalPoints',
                     style: TextStyle(
                       fontSize: 36,
                       fontWeight: FontWeight.bold,
@@ -83,37 +99,22 @@ class RewardsPage extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                TextButton(
-                  onPressed: () {
-                    // See All history logic
-                  },
-                  child: Text('See All'),
-                ),
               ],
             ),
             Expanded(
               child: ListView(
-                children: [
-                  RewardHistoryItem(
-                    points: -100,
-                    description: 'Swap reward',
-                    isNegative: true,
-                  ),
-                  RewardHistoryItem(
+                children: completedTasks.map((task) {
+                  return RewardHistoryItem(
                     points: 100,
-                    description: 'Reward from first login',
-                  ),
-                  RewardHistoryItem(
-                    points: 120,
-                    description: 'Reward from first login',
-                  ),
-                ],
+                    description: task['title']!,
+                    isNegative: false,
+                  );
+                }).toList(),
               ),
             ),
           ],
         ),
       ),
-
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           // Add new functionality
@@ -157,4 +158,3 @@ class RewardHistoryItem extends StatelessWidget {
     );
   }
 }
-

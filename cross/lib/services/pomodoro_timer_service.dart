@@ -5,13 +5,11 @@ class PomodoroTimerService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  // Get the current user's ID
   String? getCurrentUserId() {
     final User? user = _auth.currentUser;
     return user?.uid;
   }
 
-  // Get tasks for a specific user
   Future<List<Map<String, dynamic>>> getUserTasks() async {
     try {
       final String? userId = getCurrentUserId();
@@ -36,7 +34,6 @@ class PomodoroTimerService {
     }
   }
 
-  // Add a new task
   Future<void> addTask(Map<String, dynamic> taskData) async {
     try {
       final String? userId = getCurrentUserId();
@@ -54,7 +51,6 @@ class PomodoroTimerService {
     }
   }
 
-  // Update an existing task
   Future<void> updateTask(String taskId, Map<String, dynamic> updatedData) async {
     try {
       final String? userId = getCurrentUserId();
