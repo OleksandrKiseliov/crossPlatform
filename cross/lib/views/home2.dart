@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart'; // Import for date formatting
 import 'package:to_bee/services/firebase_service.dart';
+import 'package:to_bee/services/notification_service.dart';
 import 'package:to_bee/views/tasks2.dart';
 
 class TaskListPage2 extends StatefulWidget {
@@ -39,6 +40,26 @@ class _TaskListPageState2 extends State<TaskListPage2> {
       filterTasks();
       sortTasks();
     });
+
+    _scheduleTaskNotifications();
+  }
+
+  Future<void> _scheduleTaskNotifications() async {
+    final notificationService = NotificationService();
+    for (var task in allTasks) {
+      DateTime? startDate = task['startDate'] != null
+          ? DateTime.tryParse(task['startDate']!)
+          : null;
+
+      if (startDate != null && startDate.isAfter(DateTime.now())) {
+        await notificationService.scheduleNotification(
+          task['id']!,
+          'Task Reminder: ${task['title']}',
+          task['description'] ?? 'No description available',
+          startDate,
+        );
+      }
+    }
   }
 
   void filterTasks() {
@@ -105,7 +126,43 @@ class _TaskListPageState2 extends State<TaskListPage2> {
                     ),
                     const SizedBox(width: 28.5),
                     GestureDetector(
-                      onTap: () {},
+                      onTap: () {
+                        // Add action for bell icon here
+                        showDialog(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            title: Text("Upcoming Task Notifications"),
+                            content: SingleChildScrollView(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: allTasks.map((task) {
+                                  DateTime? startDate = task['startDate'] != null
+                                      ? DateTime.tryParse(task['startDate']!)
+                                      : null;
+                                  if (startDate != null && startDate.isAfter(DateTime.now())) {
+                                    return Padding(
+                                      padding: const EdgeInsets.symmetric(vertical: 5.0),
+                                      child: Text(
+                                        "${task['title']} - Starts at: ${DateFormat('yyyy-MM-dd HH:mm').format(startDate)}",
+                                        style: TextStyle(fontSize: 16),
+                                      ),
+                                    );
+                                  }
+                                  return Container();
+                                }).toList(),
+                              ),
+                            ),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: Text("Close"),
+                              )
+                            ],
+                          ),
+                        );
+                      },
                       child: Container(
                         width: 39,
                         height: 39,
@@ -298,5 +355,4 @@ class _TaskListPageState2 extends State<TaskListPage2> {
       );
     }
   }
-
 }

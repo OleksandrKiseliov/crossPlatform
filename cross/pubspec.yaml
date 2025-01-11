@@ -31,6 +31,9 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_ringtone_player: ^4.0.0
+  flutter_launcher_icons: ^0.13.1
+  flutter_local_notifications: ^18.0.1
+  permission_handler: ^10.4.3 # Остання стабільна версія
   curved_navigation_bar: ^1.0.3
   provider: ^6.1.2
 
@@ -106,3 +109,7 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "lib/assets/images/icon.png"
